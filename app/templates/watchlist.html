@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <h2 class="section-title" style="margin: 0;">{{ username }}'s Watchlist</h2>
+    <span style="background: rgba(255,255,255,0.05); padding: 5px 15px; border-radius: 20px; color: #aaa; font-size: 0.9rem;">{{ watchlist|length }} Items</span>
+</div>
+
+{% if watchlist %}
+<div style="display: flex; flex-direction: column; gap: 15px;">
+    {% for item in watchlist %}
+    <div style="background: var(--bg-card); border: 1px solid var(--glass); border-radius: 8px; padding: 20px; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s;">
+        <div>
+            <a href="/movie/{{ item.movie_title | urlencode }}" style="font-size: 1.2rem; font-weight: bold; color: #fff; text-decoration: none;">
+                {{ item.movie_title }}
+            </a>
+            <p style="color: #666; font-size: 0.85rem; margin: 5px 0 0 0;">Added on {{ item.added_at.strftime('%Y-%m-%d') }}</p>
+        </div>
+        
+        <form action="/watchlist/remove" method="post" style="margin: 0;">
+            <input type="hidden" name="movie_title" value="{{ item.movie_title }}">
+            <button type="submit" class="btn btn-danger" style="padding: 8px 16px; font-size: 0.9rem;">Remove</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div style="text-align: center; padding: 60px 20px; background: var(--bg-card); border-radius: 12px; border: 1px dashed #444;">
+    <h3 style="color: #888; font-weight: 400;">Your watchlist is currently empty.</h3>
+    <a href="/popular" class="btn" style="margin-top: 20px;">Explore Popular Movies</a>
+</div>
+{% endif %}
+{% endblock %}

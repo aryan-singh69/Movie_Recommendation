@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="margin-bottom: 40px; text-align: center;">
+    <h2 class="section-title">Popular Community Picks</h2>
+    <p style="color: #aaa; margin-top: -10px;">The highest-voted choices trending globally across all genres.</p>
+</div>
+
+<div class="movie-grid">
+    {% for movie in movies %}
+    <a href="/movie/{{ movie.title | urlencode }}" class="movie-card-link">
+        <div class="movie-card">
+            <img src="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}" alt="{{ movie.title }}" class="movie-poster">
+            <div class="movie-info">
+                <h3>{{ movie.title }}</h3>
+                <p>{{ movie.genres }}</p>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                    <span class="rating">★ {{ movie.vote_average }}</span>
+                    <span style="font-size: 0.8rem; color: #666; font-weight: bold;">{{ movie.vote_count }} Votes</span>
+                </div>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

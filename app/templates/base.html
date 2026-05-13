@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineRec - College Movie Engine</title>
+    <!-- Directly linking our beautifully structured modular layout css file! -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Pulling modern native font for highly premium typography styling -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="/">CINE REC</a></div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/popular">Popular</a>
+            {% if request.session.get('user_id') %}
+                <a href="/watchlist">Watchlist</a>
+                <a href="/logout">Logout ({{ request.session.get('username') }})</a>
+            {% else %}
+                <a href="/login">Login</a>
+                <a href="/signup">Signup</a>
+            {% endif %}
+        </div>
+    </nav>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
