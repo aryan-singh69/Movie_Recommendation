@@ -1,35 +1,30 @@
 # Movie Recommendation System 🎬
 
 ## 📌 Objective
-The primary objective of this project is to develop a highly robust, scalable, and fully functional web application that provides personalized movie recommendations. By engineering a hybrid pipeline integrating raw data cleaning, machine learning (content-based filtering), and a high-performance backend, the system allows users to intuitively search for movies, manage personal watchlists, rate films, and discover new content seamlessly.
+The primary objective of this project is to provide a clean FastAPI backend for personalized movie recommendations. The current app focuses on ML-powered recommendation, similarity, and search endpoints, leaving authentication ready for a fresh implementation later.
 
 ## ✨ Features
-* **AI Recommendation Engine**: Employs deep-learning content-based calculations via Scikit-Learn utilizing Cosine Similarities across genres, cast, crew, and plot.
-* **Stateful Secure Authentication**: Integrated user tracking utilizing `passlib` PyBcrypt password hashing and Starlette session-cookie management.
-* **Interactive UI**: A fully custom, pristine dark-mode frontend rendering efficiently without heavy Javascript frameworks.
-* **Dynamic Media Watchlists**: Logged-in users can securely curate and remove items from personal SQL-backed movie tracking queues natively.
-* **Community Rating Aggregation**: Captures and mathematically aggregates exact community ratings alongside official datasets in real-time.
+* **Hybrid Recommendation API**: Combines collaborative and content candidates, scores them with a ranking model, then reranks for quality and diversity.
+* **Similar Movies API**: Uses TF-IDF vectors and FAISS similarity search to find nearby titles.
+* **Search API**: Searches the loaded movie catalog by title.
 
 ## 🛠️ Technology Stack
 * **Backend Framework**: Python (FastAPI)
-* **Frontend Templates**: Jinja2 HTML, Custom CSS
-* **Machine Learning**: Pandas, Scikit-Learn (TF-IDF Vectorizers)
-* **Database Integration**: SQLite, SQLAlchemy ORM
-* **Security & Auth**: PyBcrypt, ItsDangerous
+* **Machine Learning**: Pandas, NumPy, Scikit-Learn, FAISS, LightGBM ranking artifacts
 
 ## 📂 Dataset Used
 This platform actively integrates a custom-trimmed slice of the **TMDB (The Movie Database)** dataset (`TMDB_all_movies.csv`). The CSV undergoes strict data sanitation using the project's native `clean_data.py` pipeline to drop null fields, patch encoding errors, and concatenate "Tags" needed for the AI engine prior to deployment.
 
 ## 🏗️ Project Architecture
-The application leverages a classic MVC (Model-View-Controller) structure decoupled natively into backend routines and template views.
-* **Controllers (`main.py`)**: Manage routing requests, session parsing, and template injection.
-* **Models (`models.py / schemas.py`)**: Control data validation structures traversing in and out of the persistent local `.db` file. 
-* **Views (`/templates`)**: Renders final states dynamically to web clients.
+The application is now an API-first FastAPI service.
+* **API (`app/main.py`)**: Loads ML artifacts and exposes recommendation, similarity, and search endpoints.
+* **Recommendation helpers (`src/ranker`)**: Applies reranking rules to model-scored candidates.
+* **Data pipelines (`clean_data.py`, `src`)**: Prepare datasets and model artifacts used at startup.
 
 ## 🧩 Core Modules
 1. **`clean_data.py`** – Parses raw large CSV constraints securely generating strict structural integrity.
-2. **`app/recommender.py`** – Bootloads finalized `.csv` matrices instantly upon server generation returning cosine logic mathematically without lag.
-3. **`app/database.py` / `models.py`** – Constructs and bridges active SQLAlchemy user schemas dynamically.
+2. **`app/main.py`** - Exposes the clean ML recommendation API.
+3. **`src/ranker/rerank.py`** - Applies quality and diversity reranking to candidate lists.
 
 ---
 
@@ -47,16 +42,17 @@ Initialize the FastAPI server securely via the `uvicorn` production wrapper engi
 ```bash
 uvicorn app.main:app --reload
 ```
-Once the log reads that the startup is complete, seamlessly open your browser to **http://127.0.0.1:8000** to interface with the server immediately!
-
-*(Note: Data structure collisions can be fixed by simply deleting the `sql_app.db` file and re-running the command so SQLAlchemy recreates your schemas cleanly.)*
+Once the log reads that startup is complete, call the API endpoints directly:
+* `http://127.0.0.1:8000/search?q=toy`
+* `http://127.0.0.1:8000/recommend/1`
+* `http://127.0.0.1:8000/similar/Toy%20Story`
 
 ---
 
 ## 🔮 Future Scope
-* **Collaborative Filtering**: Advancing the current engine strictly from metadata parsing to analyzing large arrays of user-rating comparisons collectively.
-* **Cloud Migration**: Stripping SQLite natively out to host persistent AWS PostgreSQL RDS environments securely.
-* **API Isolation**: Bridging templates out entirely for a strictly decoupled Next.js or React frontend relying on JWTs.
+* **Fresh Authentication**: Add a new auth implementation on top of the clean API.
+* **Frontend Client**: Build a separate web UI that consumes the FastAPI endpoints.
+* **Cloud Deployment**: Package the API and ML artifacts for hosted deployment.
 
 ## 👨‍💻 Author
 **[Aryan Singh]**  

@@ -15,43 +15,11 @@
         <div style="background: #fdfefe; border: 1px solid #eaeaea; padding: 15px; border-radius: 8px; margin-top: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: inline-block;">
             <p style="margin: 0;"><strong>Global TMDB Rating:</strong> <span style="color: #e67e22; font-weight: bold;">{{ movie.vote_average }} / 10</span></p>
             
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
-            
-            <p style="margin: 0;"><strong>App Community Rating:</strong> 
-                {% if avg_user_rating %}
-                    <span style="color: #27ae60; font-weight: bold;">{{ avg_user_rating }} / 5</span>
-                {% else %}
-                    <span style="color: #95a5a6; font-style: italic;">No ratings yet</span>
-                {% endif %}
-            </p>
         </div>
         
         <h4 style="margin-top: 30px;">Overview</h4>
         <p class="description" style="font-size: 1.05rem; line-height: 1.7;">{{ movie.overview }}</p>
         
-        <div style="display: flex; gap: 15px; margin-top: 35px; align-items: center; flex-wrap: wrap;">
-            {% if current_user %}
-            <form action="/watchlist/add" method="post" style="margin: 0;">
-                <input type="hidden" name="movie_title" value="{{ movie.title }}">
-                <button type="submit" class="add-btn" style="background-color: #2980b9; color: white; padding: 12px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: background-color 0.2s;">+ Add to My Watchlist</button>
-            </form>
-            
-            <form action="/rate" method="post" style="margin: 0; display: flex; align-items: center; gap: 10px;">
-                <input type="hidden" name="movie_title" value="{{ movie.title }}">
-                <select name="rating" required style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-weight: bold;">
-                    <option value="" disabled {% if not user_rating %}selected{% endif %}>Rate...</option>
-                    <option value="5" {% if user_rating == 5 %}selected{% endif %}>5 - Masterpiece</option>
-                    <option value="4" {% if user_rating == 4 %}selected{% endif %}>4 - Great</option>
-                    <option value="3" {% if user_rating == 3 %}selected{% endif %}>3 - Good</option>
-                    <option value="2" {% if user_rating == 2 %}selected{% endif %}>2 - Mediocre</option>
-                    <option value="1" {% if user_rating == 1 %}selected{% endif %}>1 - Terrible</option>
-                </select>
-                <button type="submit" style="background-color: #f39c12; color: white; padding: 10px 15px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: background-color 0.2s;">Submit Rating</button>
-            </form>
-            {% else %}
-            <p style="margin: 0; color: #7f8c8d; font-size: 0.9rem;"><em><a href="/login">Log in</a> to add to watchlist or rate this movie natively.</em></p>
-            {% endif %}
-        </div>
     </div>
 </div>
 
@@ -73,7 +41,7 @@
             {% endfor %}
         </div>
     {% else %}
-        <p>No highly similar recommendations found in the database.</p>
+        <p>No highly similar recommendations found in the catalog.</p>
     {% endif %}
 </div>
 {% endblock %}

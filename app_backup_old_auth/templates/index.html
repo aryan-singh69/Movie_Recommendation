@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-search">
+    <h1>Find Your Next Obsession</h1>
+    <p>Search via title or get instant AI recommendations curated precisely for you.</p>
+    <form action="/recommend" method="post" class="search-form">
+        <input type="text" name="movie_title" placeholder="Enter a favorite movie..." class="form-control" required style="width: 100%;">
+        <button type="submit" class="btn">Recommend</button>
+    </form>
+</div>
+
+<h2 class="section-title">Featured Films</h2>
+<div class="movie-grid">
+    {% for movie in movies %}
+    <a href="/movie/{{ movie.title | urlencode }}" class="movie-card-link">
+        <div class="movie-card">
+            <img src="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}" alt="{{ movie.title }}" class="movie-poster">
+            <div class="movie-info">
+                <h3>{{ movie.title }}</h3>
+                <p>{{ movie.genres }}</p>
+                <span class="rating">★ {{ movie.vote_average }}</span>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}
