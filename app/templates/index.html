@@ -4,9 +4,9 @@
 <div class="hero-search">
     <h1>Find Your Next Obsession</h1>
     <p>Search via title or get instant AI recommendations curated precisely for you.</p>
-    <form action="/recommend" method="post" class="search-form">
-        <input type="text" name="movie_title" placeholder="Enter a favorite movie..." class="form-control" required style="width: 100%;">
-        <button type="submit" class="btn">Recommend</button>
+    <form action="/search" method="get" class="search-form">
+        <input type="text" name="q" placeholder="Search a movie title..." class="form-control" required style="width: 100%;">
+        <button type="submit" class="btn">Search</button>
     </form>
 </div>
 

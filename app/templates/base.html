@@ -3,21 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineRec - College Movie Engine</title>
-    <!-- Directly linking our beautifully structured modular layout css file! -->
-    <link rel="stylesheet" href="/static/css/style.css">
-    <!-- Pulling modern native font for highly premium typography styling -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <title>{% block title %}MovieRec{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/app.js"></script>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo"><a href="/">CINE REC</a></div>
-        <div class="nav-links">
-            <a href="/search">Search API</a>
+    <nav id="mainNav">
+        <a href="/home" class="logo">MOVIEREC</a>
+        <div class="search-bar">
+            <input type="text" placeholder="Titles, genres..." onkeyup="if(event.key === 'Enter') performSearch(this.value)">
+        </div>
+        <div class="user-menu">
+            <span class="username-display"></span>
+            <button class="btn btn-secondary" onclick="logout()">Logout</button>
         </div>
     </nav>
-    <div class="container">
+
+    <main>
         {% block content %}{% endblock %}
-    </div>
+    </main>
+
+    <script>
+        // Global auth check except on public pages
+        if (!['/login', '/signup', '/'].includes(window.location.pathname)) {
+            checkAuth();
+        }
+    </script>
 </body>
 </html>

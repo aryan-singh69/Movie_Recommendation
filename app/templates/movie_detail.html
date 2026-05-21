@@ -1,42 +1,62 @@
 {% extends "base.html" %}
 
+{% block title %}Movie Details - MovieRec{% endblock %}
+
 {% block content %}
-<div style="display: flex; flex-wrap: wrap; gap: 40px; margin-bottom: 50px;">
-    <!-- Render Official Poster Data securely -->
-    <div style="flex: 0 0 300px;">
-        {% if movie.poster_path %}
-        <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}" style="width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-        {% else %}
-        <div style="width: 100%; aspect-ratio: 2/3; background: #2a2a2a; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #555;">No Poster</div>
-        {% endif %}
+<div class="detail-container">
+    <div class="detail-header">
+        <img id="moviePoster" class="detail-poster" src="" alt="">
+        <div class="detail-info">
+            <h1 id="movieTitle">Loading...</h1>
+            <p id="movieGenres" style="color: var(--text-secondary); margin: 0.5rem 0;"></p>
+            <div id="movieRating" style="font-size: 1.2rem; margin-bottom: 1rem;"></div>
+            
+            <div class="actions">
+                <button class="btn btn-primary" onclick="addToWatchlist({{ movie_id }})">+ Add to Watchlist</button>
+            </div>
+
+            <div class="rating-section" style="margin-top: 2rem;">
+                <h3>Rate this movie</h3>
+                <div class="rating-widget">
+                    <span class="star" onclick="rateMovie({{ movie_id }}, 1)">★</span>
+                    <span class="star" onclick="rateMovie({{ movie_id }}, 2)">★</span>
+                    <span class="star" onclick="rateMovie({{ movie_id }}, 3)">★</span>
+                    <span class="star" onclick="rateMovie({{ movie_id }}, 4)">★</span>
+                    <span class="star" onclick="rateMovie({{ movie_id }}, 5)">★</span>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Metadata Native Mapping -->
-    <div style="flex: 1; min-width: 300px;">
-        <h1 style="font-size: 2.8rem; margin: 0 0 10px 0; color: #fff;">{{ movie.title }}</h1>
-        <p style="color: #aaa; font-size: 1.1rem; margin-top: 0;">{{ movie.genres }}</p>
-
-        <div style="background: var(--bg-card); border: 1px solid var(--glass); padding: 20px; border-radius: 12px; display: inline-flex; gap: 30px; margin: 20px 0;">
-            <div>
-                <span style="display: block; color: #888; font-size: 0.9rem; text-transform: uppercase;">Global Rating</span>
-                <span style="font-size: 1.4rem; font-weight: bold; color: var(--primary);">★ {{ movie.vote_average }} / 10</span>
-            </div>
-        </div>
-
-        <h3 style="margin-top: 10px; color: #e0e0e0; font-size: 1.3rem;">Overview</h3>
-        <p style="color: #ccc; line-height: 1.6; margin-bottom: 30px;">{{ movie.overview }}</p>
-
-        <!-- Dynamic extracted movie context -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; background: rgba(255,255,255,0.02); padding: 20px; border-radius: 8px;">
-            <div>
-                <strong style="color: #fff; display: block; margin-bottom: 5px;">Director:</strong>
-                <span style="color: #ccc;">{{ movie.director if movie.director else 'Unknown' }}</span>
-            </div>
-            <div>
-                <strong style="color: #fff; display: block; margin-bottom: 5px;">Cast:</strong>
-                <span style="color: #ccc; font-size: 0.95rem; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ movie.cast if movie.cast else 'Unknown' }}</span>
-            </div>
-        </div>
+    <div class="movie-row" style="margin-top: 4rem;">
+        <h2 class="row-title">Similar Movies</h2>
+        <div id="similarRow" class="row-container"></div>
     </div>
 </div>
+
+<script>
+    async function loadDetails() {
+        const mid = {{ movie_id }};
+        const res = await fetch(`/api/movie/${mid}`);
+        if (!res.ok) return;
+        
+        const movie = await res.json();
+        document.getElementById('movieTitle').textContent = movie.title;
+        document.getElementById('movieGenres').textContent = movie.genres;
+        document.getElementById('movieRating').innerHTML = `⭐ ${movie.global_avg_rating} <span style="font-size: 0.9rem; color: #777;">Avg Rating</span>`;
+        
+        if (movie.poster_path) {
+            document.getElementById('moviePoster').src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+        } else {
+            document.getElementById('moviePoster').src = 'https://via.placeholder.com/300x450?text=No+Poster';
+        }
+
+        // Load Similar
+        const simRes = await fetch(`/api/similar/${mid}`);
+        const simData = await simRes.json();
+        renderMovieRow('similarRow', simData.similar_movies);
+    }
+
+    window.onload = loadDetails;
+</script>
 {% endblock %}

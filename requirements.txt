@@ -1,8 +1,10 @@
 fastapi
 uvicorn
 faiss-cpu
+jinja2
 lightgbm
 numpy
 pandas
 scikit-learn
 scipy
+sqlalchemy

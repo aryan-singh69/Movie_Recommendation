@@ -1,0 +1,221 @@
+:root {
+    --netflix-black: #141414;
+    --netflix-dark-grey: #181818;
+    --netflix-red: #E50914;
+    --text-primary: #FFFFFF;
+    --text-secondary: #B3B3B3;
+    --input-bg: #333333;
+    --input-border: #555555;
+}
+
+body {
+    background-color: var(--netflix-black);
+    color: var(--text-primary);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* Typography */
+h1, h2, h3 { margin: 0; }
+a { color: inherit; text-decoration: none; }
+
+/* Navigation */
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: rgba(20, 20, 20, 0.9);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 4%;
+    transition: background-color 0.3s;
+}
+
+.logo {
+    color: var(--netflix-red);
+    font-size: 1.8rem;
+    font-weight: bold;
+    letter-spacing: -1px;
+}
+
+.search-bar {
+    flex: 0 1 400px;
+}
+
+.search-bar input {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    padding: 0.5rem 1rem;
+    color: white;
+    border-radius: 4px;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: var(--netflix-red);
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Buttons */
+.btn {
+    padding: 0.6rem 1.5rem;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--netflix-red);
+    color: white;
+}
+
+.btn-secondary {
+    background-color: rgba(109, 109, 110, 0.7);
+    color: white;
+}
+
+.btn:hover { opacity: 0.8; }
+
+/* Hero Section */
+.hero {
+    position: relative;
+    height: 80vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 4%;
+    background-size: cover;
+    background-position: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(77deg, rgba(0,0,0,.6) 0, rgba(0,0,0,0) 85%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+}
+
+.hero-title { font-size: 3rem; margin-bottom: 1rem; }
+.hero-desc { font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
+
+/* Movie Rows */
+.movie-row {
+    padding: 2rem 0 2rem 4%;
+}
+
+.row-title {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.row-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 1rem;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; /* Firefox */
+}
+
+.row-container::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
+.movie-card {
+    flex: 0 0 200px;
+    scroll-snap-align: start;
+    transition: transform 0.3s;
+    cursor: pointer;
+    position: relative;
+}
+
+.movie-card:hover {
+    transform: scale(1.05);
+    z-index: 2;
+}
+
+.movie-card img {
+    width: 100%;
+    border-radius: 4px;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+}
+
+.card-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.9));
+    padding: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.movie-card:hover .card-overlay { opacity: 1; }
+
+/* Auth Forms */
+.auth-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://assets.nflxext.com/ffe/siteui/vlv3/f841d4c7-10e1-40af-bca1-0746f3a7428f/63914902-124b-4f93-9c86-1d13f9c313a1/US-en-20220502-popsignuptwoweeks-perspective_alpha_website_medium.jpg');
+    background-size: cover;
+}
+
+.auth-card {
+    background-color: rgba(0,0,0,0.75);
+    padding: 60px;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 450px;
+}
+
+.auth-card h1 { margin-bottom: 28px; }
+
+.form-group { margin-bottom: 16px; }
+
+.form-group input {
+    width: 100%;
+    padding: 16px 20px;
+    background: #333;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    box-sizing: border-box;
+}
+
+.auth-card .btn {
+    width: 100%;
+    padding: 16px;
+    margin-top: 24px;
+    font-size: 1rem;
+}
+
+.auth-card p {
+    color: #737373;
+    margin-top: 16px;
+}
+
+.auth-card p a { color: white; }
+
+/* Detail Page */
+.detail-container { padding: 4%; }
+.detail-header { display: flex; gap: 3rem; margin-top: 2rem; }
+.detail-poster { flex: 0 0 300px; border-radius: 8px; }
+.detail-info { flex: 1; }
+.rating-widget { display: flex; gap: 5px; margin: 1rem 0; font-size: 1.5rem; }
+.star { cursor: pointer; color: #555; }
+.star.active { color: gold; }
