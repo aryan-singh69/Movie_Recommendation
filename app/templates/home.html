@@ -1,75 +1,59 @@
 {% extends "base.html" %}
 
-{% block title %}Home - MovieRec{% endblock %}
+{% block title %}Browse - MovieRec{% endblock %}
+{% block page_id %}home{% endblock %}
+{% block requires_auth %}true{% endblock %}
 
 {% block content %}
-<div id="hero" class="hero">
-    <div class="hero-overlay"></div>
+<section class="hero hero-dashboard" id="hero">
+    <div class="hero-gradient"></div>
     <div class="hero-content">
-        <h1 id="heroTitle" class="hero-title">Featured Movie</h1>
-        <p id="heroDesc" class="hero-desc"></p>
-        <div class="hero-buttons">
-            <button class="btn btn-primary">▶ Play</button>
-            <button id="heroInfoBtn" class="btn btn-secondary">ⓘ More Info</button>
+        <p class="eyebrow">Recommended For You</p>
+        <h1 id="heroTitle">Loading recommendations...</h1>
+        <p id="heroDesc" class="hero-subtitle">Building your personalized shelf.</p>
+        <div class="hero-actions">
+            <button id="heroInfoBtn" class="btn btn-primary" type="button">More Info</button>
+            <button id="heroRefreshBtn" class="btn btn-secondary" type="button">Refresh</button>
         </div>
     </div>
-</div>
+</section>
 
-<div id="searchSection" class="movie-row" style="display:none;">
-    <h2 class="row-title">Search Results</h2>
-    <div id="searchResults" class="row-container"></div>
-</div>
+<section id="searchSection" class="content-section hidden">
+    <div class="section-heading">
+        <p class="eyebrow">Search Results</p>
+        <h2 id="searchTitle">Movies</h2>
+    </div>
+    <div id="searchState" class="state-message hidden"></div>
+    <div id="searchResults" class="movie-grid"></div>
+</section>
 
-<div class="movie-row">
-    <h2 class="row-title">Recommended For You</h2>
-    <div id="recommendedRow" class="row-container"></div>
-</div>
+<section class="content-section">
+    <div class="section-heading">
+        <p class="eyebrow">Your Taste</p>
+        <h2>Recommended For You</h2>
+    </div>
+    <div id="recommendedRow" class="movie-grid">
+        <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+    </div>
+</section>
 
-<div class="movie-row">
-    <h2 class="row-title">Popular on MovieRec</h2>
-    <div id="popularRow" class="row-container"></div>
-</div>
+<section class="content-section">
+    <div class="section-heading">
+        <p class="eyebrow">Trending</p>
+        <h2>Popular on MovieRec</h2>
+    </div>
+    <div id="popularRow" class="movie-grid">
+        <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+    </div>
+</section>
 
-<div class="movie-row">
-    <h2 class="row-title">Top Rated</h2>
-    <div id="topRatedRow" class="row-container"></div>
-</div>
-
-<script>
-    async function loadHome() {
-        const userId = localStorage.getItem('user_id');
-        
-        // Load Recommendations
-        const recData = await fetchMovies(`/api/recommend/${userId}`);
-        renderMovieRow('recommendedRow', recData.recommendations);
-        
-        // Setup Hero from first recommendation
-        if (recData.recommendations.length > 0) {
-            const featured = recData.recommendations[0];
-            document.getElementById('heroTitle').textContent = featured.title;
-            document.getElementById('heroDesc').textContent = featured.genres;
-            if (featured.poster_path) {
-                document.getElementById('hero').style.backgroundImage = `url(https://image.tmdb.org/t/p/original${featured.poster_path})`;
-            }
-            document.getElementById('heroInfoBtn').onclick = () => window.location.href = `/movie/${featured.movieId}`;
-        }
-
-        // Load Popular
-        const popData = await fetchMovies('/api/popular');
-        renderMovieRow('popularRow', popData.recommendations);
-
-        // Load Top Rated
-        const topData = await fetchMovies('/api/top-rated');
-        renderMovieRow('topRatedRow', topData.recommendations);
-    }
-
-    // Override performSearch to show search section
-    const originalSearch = performSearch;
-    window.performSearch = async (query) => {
-        document.getElementById('searchSection').style.display = query ? 'block' : 'none';
-        await originalSearch(query);
-    };
-
-    window.onload = loadHome;
-</script>
+<section class="content-section">
+    <div class="section-heading">
+        <p class="eyebrow">Critic Picks</p>
+        <h2>Top Rated</h2>
+    </div>
+    <div id="topRatedRow" class="movie-grid">
+        <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+    </div>
+</section>
 {% endblock %}

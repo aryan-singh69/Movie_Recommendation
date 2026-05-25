@@ -7,11 +7,16 @@ import sys
 import faiss
 import numpy as np
 import pandas as pd
-from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi import FastAPI, HTTPException, Request, Depends, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 from scipy.sparse import issparse
 from sqlalchemy.orm import Session
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 from . import models, database, auth
 from .database import Base, engine, get_db
@@ -164,14 +169,11 @@ app.include_router(auth_router)
 app.include_router(watchlist_router)
 app.include_router(rating_router)
 
-
+# Template Routes
 @app.get("/")
-async def landing(request: Request):
+async def root(request: Request):
+    # JavaScript on the client will handle the actual redirect based on token
     return templates.TemplateResponse(request=request, name="index.html")
-
-@app.get("/home")
-async def home_page(request: Request):
-    return templates.TemplateResponse(request=request, name="home.html")
 
 @app.get("/login")
 async def login_page(request: Request):
@@ -181,11 +183,16 @@ async def login_page(request: Request):
 async def signup_page(request: Request):
     return templates.TemplateResponse(request=request, name="signup.html")
 
+@app.get("/home")
+async def home_page(request: Request):
+    # Authentication check is handled by JavaScript checkAuth() in base.html/home.html
+    return templates.TemplateResponse(request=request, name="home.html")
+
 @app.get("/movie/{movie_id}")
 async def movie_detail_page(request: Request, movie_id: int):
     return templates.TemplateResponse(request=request, name="movie_detail.html", context={"movie_id": movie_id})
 
-
+# API Routes
 def _movie_payload(row: pd.Series) -> dict:
     genre_col = "genres_ml" if "genres_ml" in row.index else "genres_tmdb"
     title = row.get("title_ml", row.get("title_tmdb", "Unknown"))
@@ -196,7 +203,6 @@ def _movie_payload(row: pd.Series) -> dict:
         "global_avg_rating": round(float(row.get("global_avg_rating", 0.0)), 2),
         "poster_path": str(row.get("poster_path", "") or ""),
     }
-
 
 @app.get("/api/search")
 async def search_movies(q: str = ""):
@@ -221,7 +227,11 @@ async def search_movies(q: str = ""):
 
 @app.get("/api/popular")
 async def get_popular():
-    return {"recommendations": _popularity_fallback()[:20]}
+    movies_df = ml_artifacts.get("movies_df")
+    if movies_df is None: return {"recommendations": []}
+    
+    popular = movies_df.nlargest(20, "rating_count")
+    return {"recommendations": [_movie_payload(row) for _, row in popular.iterrows()]}
 
 @app.get("/api/top-rated")
 async def get_top_rated():
@@ -231,6 +241,19 @@ async def get_top_rated():
     top = movies_df[movies_df["rating_count"] > 100].nlargest(20, "global_avg_rating")
     return {"recommendations": [_movie_payload(row) for _, row in top.iterrows()]}
 
+@app.get("/api/movie/{movie_id}")
+async def get_movie_details(movie_id: int):
+    movie_info = ml_artifacts.get("movie_info", {})
+    info = movie_info.get(movie_id)
+    if not info:
+        # Check DataFrame if not in pre-built info
+        movies_df = ml_artifacts.get("movies_df")
+        if movies_df is not None:
+            row = movies_df[movies_df["movieId"] == movie_id]
+            if not row.empty:
+                return _movie_payload(row.iloc[0])
+        raise HTTPException(status_code=404, detail="Movie not found")
+    return info
 
 def _score_and_rerank(user_id: int) -> list[dict]:
     cf_cands = ml_artifacts.get("cf_candidates", {})
@@ -304,7 +327,6 @@ def _score_and_rerank(user_id: int) -> list[dict]:
 
     return results
 
-
 def _popularity_fallback() -> list[dict]:
     pop_cands = ml_artifacts.get("popularity_candidates", [])
     movies_df = ml_artifacts.get("movies_df")
@@ -332,7 +354,6 @@ def _popularity_fallback() -> list[dict]:
         })
     return results
 
-
 @app.get("/api/recommend/{user_id}")
 async def recommend_for_user(
     user_id: int, 
@@ -353,7 +374,6 @@ async def recommend_for_user(
 
     recs = _popularity_fallback()
     return {"user_id": user_id, "source": "popularity_fallback", "recommendations": recs}
-
 
 @app.get("/api/similar/{movie_id}")
 async def similar_movies(movie_id: int):
@@ -392,11 +412,3 @@ async def similar_movies(movie_id: int):
         if len(results) >= 10: break
 
     return {"movieId": movie_id, "similar_movies": results}
-
-@app.get("/api/movie/{movie_id}")
-async def get_movie_details(movie_id: int):
-    movie_info = ml_artifacts.get("movie_info", {})
-    info = movie_info.get(movie_id)
-    if not info:
-        raise HTTPException(status_code=404, detail="Movie not found")
-    return info

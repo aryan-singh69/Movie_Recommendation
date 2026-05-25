@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -12,10 +12,11 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, nullable=False, index=True)
     email = Column(String, unique=True, nullable=False, index=True)
-    password_hash = Column("hashed_password", String, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     watchlists = relationship("Watchlist", back_populates="user", cascade="all, delete-orphan")
-    ratings = relationship("Rating", back_populates="user", cascade="all, delete-orphan")
+    ratings = relationship("UserRating", back_populates="user", cascade="all, delete-orphan")
 
 
 class Watchlist(Base):
@@ -23,19 +24,19 @@ class Watchlist(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    movie_title = Column(String, nullable=False)
+    movie_id = Column(Integer, nullable=False)
     added_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="watchlists")
 
 
-class Rating(Base):
-    __tablename__ = "ratings"
+class UserRating(Base):
+    __tablename__ = "user_ratings"
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    movie_title = Column(String, nullable=False)
-    rating = Column(Integer, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    movie_id = Column(Integer, nullable=False)
+    rating = Column(Float, nullable=False)
+    rated_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="ratings")

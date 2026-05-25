@@ -1,28 +1,32 @@
 {% extends "base.html" %}
 
 {% block title %}Sign Up - MovieRec{% endblock %}
+{% block page_id %}signup{% endblock %}
 
 {% block content %}
-<div class="auth-container">
+<section class="auth-shell">
     <div class="auth-card">
-        <h1>Sign Up</h1>
-        <form onsubmit="event.preventDefault(); signup(this.username.value, this.email.value, this.password.value)">
-            <div class="form-group">
-                <input type="text" name="username" placeholder="Username" required minlength="3">
-            </div>
-            <div class="form-group">
-                <input type="email" name="email" placeholder="Email" required>
-            </div>
-            <div class="form-group">
-                <input type="password" name="password" placeholder="Password" required minlength="6">
-            </div>
-            <button type="submit" class="btn btn-primary">Get Started</button>
-        </form>
-        <p>Already have an account? <a href="/login">Sign in.</a></p>
-    </div>
-</div>
+        <a href="/" class="auth-brand">MovieRec</a>
+        <h1>Create account</h1>
+        <p>Build a profile and unlock personalized recommendations.</p>
 
-<style>
-    #mainNav { display: none; }
-</style>
+        <form id="signupForm" class="auth-form" novalidate>
+            <label>
+                Username
+                <input type="text" name="username" placeholder="moviefan" autocomplete="username" minlength="3" required>
+            </label>
+            <label>
+                Email
+                <input type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+            </label>
+            <label>
+                Password
+                <input type="password" name="password" placeholder="At least 6 characters" autocomplete="new-password" minlength="6" maxlength="72" required>
+            </label>
+            <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+        </form>
+
+        <p class="auth-switch">Already have an account? <a href="/login">Sign in</a></p>
+    </div>
+</section>
 {% endblock %}

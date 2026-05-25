@@ -1,28 +1,36 @@
 {% extends "base.html" %}
 
-{% block content %}
-<div class="hero-search">
-    <h1>Find Your Next Obsession</h1>
-    <p>Search via title or get instant AI recommendations curated precisely for you.</p>
-    <form action="/search" method="get" class="search-form">
-        <input type="text" name="q" placeholder="Search a movie title..." class="form-control" required style="width: 100%;">
-        <button type="submit" class="btn">Search</button>
-    </form>
-</div>
+{% block title %}MovieRec - Stream Better Recommendations{% endblock %}
+{% block page_id %}landing{% endblock %}
 
-<h2 class="section-title">Featured Films</h2>
-<div class="movie-grid">
-    {% for movie in movies %}
-    <a href="/movie/{{ movie.title | urlencode }}" class="movie-card-link">
-        <div class="movie-card">
-            <img src="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}" alt="{{ movie.title }}" class="movie-poster">
-            <div class="movie-info">
-                <h3>{{ movie.title }}</h3>
-                <p>{{ movie.genres }}</p>
-                <span class="rating">★ {{ movie.vote_average }}</span>
-            </div>
+{% block content %}
+<section class="landing-hero">
+    <div class="hero-backdrop" aria-hidden="true"></div>
+    <div class="hero-copy">
+        <p class="eyebrow">Personalized Movie Discovery</p>
+        <h1>Find your next favorite movie before the credits roll.</h1>
+        <p class="hero-subtitle">
+            Search, save, rate, and explore recommendations powered by your MovieRec backend.
+        </p>
+        <div class="hero-actions">
+            <a href="/signup" class="btn btn-primary">Start Watching</a>
+            <a href="/login" class="btn btn-secondary">Sign In</a>
         </div>
-    </a>
-    {% endfor %}
-</div>
+    </div>
+</section>
+
+<section class="preview-band">
+    <div class="section-heading">
+        <p class="eyebrow">Live Catalog</p>
+        <h2>Search the movie library</h2>
+    </div>
+
+    <form class="search-panel" id="landingSearchForm">
+        <input type="search" id="landingSearchInput" placeholder="Try Toy Story, Batman, Matrix..." autocomplete="off">
+        <button class="btn btn-primary" type="submit">Search</button>
+    </form>
+
+    <div id="landingSearchState" class="state-message hidden"></div>
+    <div id="landingSearchResults" class="movie-grid compact-grid"></div>
+</section>
 {% endblock %}

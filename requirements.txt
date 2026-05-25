@@ -1,10 +1,14 @@
 fastapi
 uvicorn
+bcrypt
 faiss-cpu
-jinja2
 lightgbm
 numpy
 pandas
 scikit-learn
 scipy
+python-jose[cryptography]
+python-multipart
+python-dotenv
 sqlalchemy
+email-validator

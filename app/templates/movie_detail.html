@@ -1,62 +1,46 @@
 {% extends "base.html" %}
 
 {% block title %}Movie Details - MovieRec{% endblock %}
+{% block page_id %}movie-detail{% endblock %}
+{% block requires_auth %}true{% endblock %}
 
 {% block content %}
-<div class="detail-container">
-    <div class="detail-header">
-        <img id="moviePoster" class="detail-poster" src="" alt="">
-        <div class="detail-info">
-            <h1 id="movieTitle">Loading...</h1>
-            <p id="movieGenres" style="color: var(--text-secondary); margin: 0.5rem 0;"></p>
-            <div id="movieRating" style="font-size: 1.2rem; margin-bottom: 1rem;"></div>
-            
-            <div class="actions">
-                <button class="btn btn-primary" onclick="addToWatchlist({{ movie_id }})">+ Add to Watchlist</button>
-            </div>
+<section class="detail-page" data-movie-id="{{ movie_id }}">
+    <div id="detailState" class="state-message">Loading movie details...</div>
 
-            <div class="rating-section" style="margin-top: 2rem;">
-                <h3>Rate this movie</h3>
-                <div class="rating-widget">
-                    <span class="star" onclick="rateMovie({{ movie_id }}, 1)">★</span>
-                    <span class="star" onclick="rateMovie({{ movie_id }}, 2)">★</span>
-                    <span class="star" onclick="rateMovie({{ movie_id }}, 3)">★</span>
-                    <span class="star" onclick="rateMovie({{ movie_id }}, 4)">★</span>
-                    <span class="star" onclick="rateMovie({{ movie_id }}, 5)">★</span>
+    <article id="detailContent" class="detail-layout hidden">
+        <div class="detail-poster-wrap">
+            <img id="moviePoster" class="detail-poster" src="" alt="">
+        </div>
+
+        <div class="detail-copy">
+            <p class="eyebrow">Movie Details</p>
+            <h1 id="movieTitle">Movie title</h1>
+            <div id="movieGenres" class="genre-list"></div>
+            <div id="movieRating" class="rating-line"></div>
+
+            <div class="detail-actions">
+                <button class="btn btn-primary" type="button" id="watchlistBtn">Add to Watchlist</button>
+                <div class="rating-control" aria-label="Rate this movie">
+                    <button type="button" data-rating="1">★</button>
+                    <button type="button" data-rating="2">★</button>
+                    <button type="button" data-rating="3">★</button>
+                    <button type="button" data-rating="4">★</button>
+                    <button type="button" data-rating="5">★</button>
                 </div>
             </div>
         </div>
-    </div>
+    </article>
 
-    <div class="movie-row" style="margin-top: 4rem;">
-        <h2 class="row-title">Similar Movies</h2>
-        <div id="similarRow" class="row-container"></div>
-    </div>
-</div>
-
-<script>
-    async function loadDetails() {
-        const mid = {{ movie_id }};
-        const res = await fetch(`/api/movie/${mid}`);
-        if (!res.ok) return;
-        
-        const movie = await res.json();
-        document.getElementById('movieTitle').textContent = movie.title;
-        document.getElementById('movieGenres').textContent = movie.genres;
-        document.getElementById('movieRating').innerHTML = `⭐ ${movie.global_avg_rating} <span style="font-size: 0.9rem; color: #777;">Avg Rating</span>`;
-        
-        if (movie.poster_path) {
-            document.getElementById('moviePoster').src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
-        } else {
-            document.getElementById('moviePoster').src = 'https://via.placeholder.com/300x450?text=No+Poster';
-        }
-
-        // Load Similar
-        const simRes = await fetch(`/api/similar/${mid}`);
-        const simData = await simRes.json();
-        renderMovieRow('similarRow', simData.similar_movies);
-    }
-
-    window.onload = loadDetails;
-</script>
+    <section class="content-section flush">
+        <div class="section-heading">
+            <p class="eyebrow">Because You Opened This</p>
+            <h2>Similar Movies</h2>
+        </div>
+        <div id="similarState" class="state-message hidden"></div>
+        <div id="similarRow" class="movie-grid">
+            <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+        </div>
+    </section>
+</section>
 {% endblock %}

@@ -3,31 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050505">
     <title>{% block title %}MovieRec{% endblock %}</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <script src="/static/app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+    <script src="{{ url_for('static', path='js/app.js') }}" defer></script>
+    {% block extra_head %}{% endblock %}
 </head>
-<body>
-    <nav id="mainNav">
-        <a href="/home" class="logo">MOVIEREC</a>
-        <div class="search-bar">
-            <input type="text" placeholder="Titles, genres..." onkeyup="if(event.key === 'Enter') performSearch(this.value)">
-        </div>
-        <div class="user-menu">
-            <span class="username-display"></span>
-            <button class="btn btn-secondary" onclick="logout()">Logout</button>
+<body data-page="{% block page_id %}default{% endblock %}" data-requires-auth="{% block requires_auth %}false{% endblock %}">
+    <nav class="navbar" id="mainNav" aria-label="Primary navigation">
+        <a href="/" class="brand" aria-label="MovieRec home">
+            <span class="brand-mark">M</span>
+            <span>MovieRec</span>
+        </a>
+
+        <form class="nav-search" id="navSearchForm" role="search">
+            <input id="navSearchInput" type="search" placeholder="Search movies..." autocomplete="off" aria-label="Search movies">
+            <button type="submit" class="icon-button" aria-label="Search">
+                <span aria-hidden="true">⌕</span>
+            </button>
+        </form>
+
+        <div class="nav-actions">
+            <a href="/home" class="nav-link auth-only">Browse</a>
+            <a href="/login" class="nav-link guest-only">Login</a>
+            <a href="/signup" class="btn btn-primary btn-small guest-only">Sign Up</a>
+            <span class="user-pill auth-only">
+                <span class="user-avatar" aria-hidden="true">U</span>
+                <span class="username-display">User</span>
+            </span>
+            <button type="button" class="btn btn-ghost btn-small auth-only" data-action="logout">Logout</button>
         </div>
     </nav>
+
+    <div id="toastHost" class="toast-host" aria-live="polite" aria-atomic="true"></div>
 
     <main>
         {% block content %}{% endblock %}
     </main>
 
-    <script>
-        // Global auth check except on public pages
-        if (!['/login', '/signup', '/'].includes(window.location.pathname)) {
-            checkAuth();
-        }
-    </script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>
